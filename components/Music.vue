@@ -1,5 +1,11 @@
 <template>
-    <main class='main'>
+    <main class="main">
+        <button
+            class="musicBtn"
+            @click="musicStart"
+            >
+            music
+        </button>
         <button 
             class="startBtn"
             @click="appStart"
@@ -14,6 +20,7 @@
 </template>
 
 <script>
+import Tone from 'tone'
 export default {
     data() {
         return {
@@ -23,6 +30,10 @@ export default {
     methods: {
         appStart(){
             this.isStarted = true
+        },
+        musicStart() {
+            var synth = new Tone.Synth().toMaster()
+            synth.triggerAttackRelease('C4', '8n')
         }
     }
 }
@@ -36,7 +47,8 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.startBtn{
+.startBtn,
+.musicBtn{
     padding: 10px 20px;
 }
 .touchZone{
