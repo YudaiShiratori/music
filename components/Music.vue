@@ -1,20 +1,24 @@
 <template>
     <main class="main">
         <button
-            class="musicBtn"
-            @click="musicStart"
-            >
-            music
-        </button>
-        <button 
             class="startBtn"
             @click="appStart"
-            v-if="isStarted==false">
+            v-if="isStarted==false"
+            >
             Start
         </button>
         <section
+            @mousedown="ringStart"
+            @touchstart="ringStart"
+            @mouseup="ringStop"
+            @touchend="ringStop"
+            @mouseleave="ringStop"
+            @touchleave="ringStop"
+            @mousemove="ring"
+            @touchmove="ring"
             class="touchZone"
-            v-else>
+            v-else
+            >
         </section>
     </main>
 </template>
@@ -24,16 +28,34 @@ import Tone from 'tone'
 export default {
     data() {
         return {
-            isStarted: false
+            isStarted: false,
+            snyth: null,
+            isRing: false
         }
     },
     methods: {
         appStart(){
             this.isStarted = true
+            this.synth = new Tone.MonoSynth().toMaster();
         },
         musicStart() {
             var synth = new Tone.Synth().toMaster()
             synth.triggerAttackRelease('C4', '8n')
+        },
+        ringStart() {
+            this.isRing = true;
+            this.ring()
+        },
+        ringStop() {
+            this.isRing = false;
+            this.ring()
+        },
+        ring() {
+            if(this.isRing) {
+                this.synth.triggerAttack('C3');
+            } else {
+                this.synth.triggerRelease();
+            }
         }
     }
 }
@@ -47,8 +69,7 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.startBtn,
-.musicBtn{
+.startBtn{
     padding: 10px 20px;
 }
 .touchZone{
