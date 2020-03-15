@@ -17,6 +17,7 @@
             @mousemove="ring"
             @touchmove="ring"
             class="touchZone"
+            id="touchZone"
             v-else
             >
         </section>
@@ -51,6 +52,32 @@ export default {
             this.ring()
         },
         ring() {
+            const minVol = -36
+            const minFreq = new Tone.Frequency("E1").toFrequency();
+            const maxFreq = new Tone.Frequency("E5").toFrequency();
+            var x = 0;
+            var y = 0;
+            if(typeof event !== "undefined") {
+                // for SmartPhone Touch
+                if(typeof event.touches !== "undefined" && event.touches.length > 0) {
+                    x = - event.touches[0].clientX;
+                    y = event.topuches[0].clientY;
+                } else {
+                    //for Mouse touch
+                    x = event.clientX;
+                    y = event.clientY;
+                }
+            }
+            
+            const height = document.getElementById("touchZone").clientHeight;
+            const currentVol = Math.round((y/height) * minVol)
+            console.log(currentVol)
+            this.synth.volume.value = currentVol
+
+            const width = document.getElementById("touchZone").clientWidth;
+            const currentFreq = Math.round((x * (maxFreq - minFreq)) / width) + minFreq;
+            console.log(currentFreq)
+
             if(this.isRing) {
                 this.synth.triggerAttack('C3');
             } else {
